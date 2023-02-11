@@ -129,6 +129,12 @@ CREATE TABLE statement_transfers (
     transfer_id INTEGER NOT NULL REFERENCES transfers(id)
 );
 
+CREATE TABLE statement_accounts {
+    id INTEGER PRIMARY KEY,
+    statement_id INTEGER NOT NULL REFERENCES statements(id),
+    account_id INTEGER NOT NULL REFERENCES accounts(id)
+}
+
 CREATE TABLE statement_attachments (
     id INTEGER PRIMARY KEY,
     upload_time INTEGER NOT NULL,
