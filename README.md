@@ -1,2 +1,2 @@
 # cyber
-Personal financial management
+Personal data store

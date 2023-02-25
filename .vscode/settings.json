@@ -1,5 +1,3 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic",
-    "rust-analyzer.inlayHints.chainingHints.enable": false,
-    "rust-analyzer.assist.importMergeBehaviour": "last"
+
 }
