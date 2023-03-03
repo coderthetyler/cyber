@@ -1,0 +1,39 @@
+FROM ubuntu:22.04
+MAINTAINER TJ Daddio <hello@tjdaddio.com>
+
+ARG USERNAME=bamboo
+ARG USER_UID=1234
+ARG USER_GID=$USER_UID
+
+RUN \
+    echo "**** install packages ****" && \
+    apt-get update && apt-get install -y \
+        curl \
+        gcc \
+        git \
+        libssl-dev \
+        nmap \
+        sudo \
+        sqlite3 \
+        vim && \
+    # Rust (latest)
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s - -y && \
+    # Node.js (^18)
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    # Enable yarn via corepack (comes with node): https://yarnpkg.com/getting-started/install
+    corepack enable && \
+    corepack prepare yarn@stable --activate && \
+    apt-get clean
+
+RUN \
+    echo "**** configuring user ****" && \
+    groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID --shell /bin/bash -m $USERNAME && \
+    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
+USER $USERNAME
+
+EXPOSE 2222
+EXPOSE 8081
+EXPOSE 8443

@@ -1,0 +1,31 @@
+{
+    "name": "Cyber Devcontainer",
+    "build": {
+        "dockerfile": "Containerfile",
+        "args": {}
+    },
+    "remoteUser": "bamboo",
+    "containerUser": "bamboo",
+    "containerEnv": {
+        "HOME": "/home/bamboo"
+    },
+    "runArgs": [
+        "--userns=keep-id:uid=1234,gid=1234"
+    ],
+    "forwardPorts": [
+        2222, 8081, 8443
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "eslint.validate": [ "javascript", "html" ]
+            },
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "bungcip.better-toml",
+                "dbaeumer.vscode-eslint",
+                "eamodio.gitlens"
+            ]
+        }
+    }
+}
