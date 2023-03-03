@@ -14,13 +14,17 @@
         "--shm-size=256m"
     ],
     "forwardPorts": [
-        8081, 8443
+        8081,
+        8443
     ],
     "postStartCommand": "npm i",
     "customizations": {
         "vscode": {
             "settings": {
-                "eslint.validate": [ "javascript", "html" ]
+                "eslint.validate": [
+                    "javascript",
+                    "html"
+                ]
             },
             "extensions": [
                 "rust-lang.rust-analyzer",
