@@ -10,7 +10,8 @@
         "HOME": "/home/bamboo"
     },
     "runArgs": [
-        "--userns=keep-id:uid=1234,gid=1234"
+        "--userns=keep-id:uid=1234,gid=1234",
+        "--shm-size=256m"
     ],
     "forwardPorts": [
         8081, 8443
