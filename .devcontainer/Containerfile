@@ -1,5 +1,4 @@
 FROM ubuntu:22.04
-MAINTAINER TJ Daddio <hello@tjdaddio.com>
 
 ARG USERNAME=bamboo
 ARG USER_UID=1234
@@ -24,6 +23,7 @@ RUN \
     # Enable yarn via corepack (comes with node): https://yarnpkg.com/getting-started/install
     corepack enable && \
     corepack prepare yarn@stable --activate && \
+    # Clean up
     apt-get clean
 
 RUN \
@@ -34,6 +34,5 @@ RUN \
     chmod 0440 /etc/sudoers.d/$USERNAME
 USER $USERNAME
 
-EXPOSE 2222
 EXPOSE 8081
 EXPOSE 8443

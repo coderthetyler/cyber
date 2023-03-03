@@ -1,5 +1,5 @@
 {
-    "name": "Cyber Devcontainer",
+    "name": "CyberDev",
     "build": {
         "dockerfile": "Containerfile",
         "args": {}
@@ -13,8 +13,9 @@
         "--userns=keep-id:uid=1234,gid=1234"
     ],
     "forwardPorts": [
-        2222, 8081, 8443
+        8081, 8443
     ],
+    "postStartCommand": "npm i",
     "customizations": {
         "vscode": {
             "settings": {
