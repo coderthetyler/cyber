@@ -13,6 +13,7 @@
         "--userns=keep-id:uid=1234,gid=1234",
         "--shm-size=256m"
     ],
+    "appPort": [ "8080:8080" ], // appPort needed to tell vscode to listen on all interfaces
     "forwardPorts": [
         8081,
         8443
