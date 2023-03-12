@@ -4,6 +4,16 @@ import * as localforage from "localforage";
 
 // TODO add logging to see callback activity (mostly to detect runaway recursion & duplicate updates)
 
+// function stolen from here:
+// https://github.com/wecraftapps/automerge-websocket/blob/33b463a2e042c1db149c838eecaffc1c8038c0f0/front/src/index.js#L139
+const uint8ToBase64 = (arr) =>
+    btoa(
+        Array(arr.length)
+            .fill('')
+            .map((_, i) => String.fromCharCode(arr[i]))
+            .join('')
+    );
+
 class Context {
     // TODO refactor out to reduce page load time
     static async load() {
@@ -23,39 +33,61 @@ class Context {
      * @param {string} browserId 
      */
     constructor(doc, browserId) {
-        // TODO define a generic type for the Doc
-        /**
-         * Identifier for this application instance. This is unique per tab.
-         * Tabs should ignore messages in the BroadcastChannel from themselves.
-         */
         this.tabId = uuidv4();
-        /**
-         * Identifier for this browser instance. This is unique per browser.
-         * 
-         * Tabs should ignore WebSocket messages from the same browser because they are synchronized via the BroadcastChannel. 
-         */
         this.browserId = browserId;
-        /**
-         * Wrapped Automerge document.
-         */
         this.doc = doc;
-        /**
-         * Broadcast channel used to synchronize tabs within the same browser.
-         */
         this.channel = new BroadcastChannel("cyber-broadcast");
         this.channel.onmessage = (e) => {
             let { sourceTabId, binaryChanges } = e.data;
             console.log(`received: sourceTab=${sourceTabId}, changes=${binaryChanges.length()}`)
+            // TODO parse into Changes & call #receiveChanges
             // TODO ignore messages from myself
-            // TODO parse into Changes & call Automerge.applyChanges(old, new)
             // TODO propagate doc mutations to the UI
             // do NOT persist here; the tab that made the changes is responsible for persisting
         };
         this.channel.onmessageerror = (e) => {
-            // TODO do something reasonable when received message can't be deserialized
+            // TODO when can this occur?
         };
 
-        // TODO create websocket connection to the sync server
+        // TODO keep track of Changes that haven't been sent
+        // TODO attempt reconnect
+
+        this.ws = new WebSocket('ws://192.168.1.88:8081');
+        this.ws.onopen = function(e) {
+            alert("[open] Connection established");
+            alert("Sending to server");
+            this.ws.send("My name is John");
+            // TODO call #synchronizeWithSyncServer
+        };
+        this.ws.onmessage = function(event) {
+            alert(`[message] Data received from server: ${event.data}`);
+            // TODO call #receiveChanges
+        };
+        this.ws.onclose = function(event) {
+            if (event.wasClean) {
+                // TODO add UI feedback when server connection was closed cleanly
+                alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            } else {
+                // TODO add UI feedback when server connection was interrupted (server killed or network down)
+                // can also occur when locking screen on mobile
+                // TODO attempt reconnect
+                alert(`[close] Connection died: ${event.code}`);
+            }
+        };
+        this.ws.onerror = function(error) {
+            // TODO when can this occur, and how can those distinct events be handled?
+            alert(`[error] ${error}`);
+        };
+
+        // TODO perform sync process with WS server on (re)connect
+    }
+
+    synchronizeWithSyncServer() {
+        // TODO perform sync protocol
+    }
+
+    receiveChanges() {
+        // TODO apply changes
     }
 
     /**
@@ -80,9 +112,11 @@ class Context {
             sourceTabId: this.tabId,
             binaryChanges: changes,
         });
-
+        
         // TODO persist changes with localforage
+
         // TODO post changes to the sync server via websocket connection
+        // TODO don't attempt to sync if not connected to websocket server
     }
 }
 
@@ -116,3 +150,15 @@ function renderDebug() {
 }
 
 renderDebug();
+
+
+let fileUploadEl = document.getElementById("file-upload");
+
+function handleFileUploadChangeEvent() {
+    for (let file of fileUploadEl.files) {
+       
+        // TODO pass to FileReader & async consume text via import dispatcher
+    }
+}
+
+fileUploadEl.addEventListener("change", handleFileUploadChangeEvent, false);
